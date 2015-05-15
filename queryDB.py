@@ -35,13 +35,16 @@ def setNewPrice(items):
       session.add(item)
       session.commit()
 
-item = session.query(Restaurant).first()
-item.name = "Iain's Pizza Palace"
-session.add(item)
-session.commit()
 
+menuItem = session.query(MenuItem).filter_by(restaurant_id='4', id='18').one()
+printMenuItem(menuItem)
 
 # Example Use Cases
+
+# item = session.query(Restaurant).first()
+# item.name = "Iain's Pizza Palace"
+# session.add(item)
+# session.commit()
 
 # printMenuItem(item)
 # session.delete(item)
