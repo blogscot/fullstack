@@ -2,16 +2,28 @@
 <html>
 <head>
   <title>Restaurants Menu</title>
+  <link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}">
 </head>
 <body>
   <h1>{{restaurant.name}}</h1>
+
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+
+      <ul>
+      {% for message in messages %}
+        <li> <strong> {{message}} </strong></li>
+      {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
 
   <a href='{{url_for('newMenuItem', restaurant_id=restaurant.id)}}' type="submit">Create New Item</a>
   
   {% for item in items %}
   
   <h2>{{item.name}}&nbsp;<small>{{item.price}}</small></h2>
-  <p>{{item.description}}</p>
+  <p class="description">{{item.description}}</p>
 
   <a href='{{url_for('editMenuItem', restaurant_id=restaurant.id, menu_id=item.id)}}' type="submit">Edit</a>
   <a href='{{url_for('deleteMenuItem', restaurant_id=restaurant.id, menu_id=item.id)}}' type="submit">Delete</a>
