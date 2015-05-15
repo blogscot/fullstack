@@ -1,15 +1,29 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+
 app = Flask(__name__)
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from database_setup import Base, Restaurant, MenuItem
+from setup_database import Base, Restaurant, MenuItem
 
 engine = create_engine('sqlite:///restaurantmenu.db')
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind = engine)
 session = DBSession()
+
+#Making an API endpoint (GET request)
+@app.route('/restaurants/<int:restaurant_id>/menu/JSON')
+def restaurantMenuJSON(restaurant_id):
+  items = session.query(MenuItem).filter_by(restaurant_id=restaurant_id).all()
+
+  return jsonify(MenuItems=[i.serialize for i in items])
+
+@app.route('/restaurant/<int:restaurant_id>/<int:menu_id>/JSON')
+def restaurantMenuItemJSON(restaurant_id, menu_id):
+  item = session.query(MenuItem).filter_by(id=menu_id).one()
+  return jsonify(MenuItem=[item.serialize])
+
 
 @app.route('/')
 @app.route('/restaurants/<int:restaurant_id>/')
@@ -75,6 +89,6 @@ def deleteMenuItem(restaurant_id, menu_id):
 
 
 if __name__ == "__main__":
-  app.secret_key = 'the_pairs_sail_around_the_flying_monkeys'
+  # app.secret_key = 'the_pairs_sail_around_the_flying_monkeys'
   app.debug = True
   app.run(host = '0.0.0.0', port = 5000)
